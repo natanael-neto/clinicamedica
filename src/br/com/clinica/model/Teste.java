@@ -38,5 +38,7 @@ public class Teste {
         this.idade = idade;
     }
     
-    
+    public String falar (){
+        return "olá";
+    }
 }
