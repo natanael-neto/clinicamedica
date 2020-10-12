@@ -13,7 +13,6 @@ public class Teste {
     public int id;
     public String nome;
     public String idade;
-    public int numero;
 
     public int getId() {
         return id;
