@@ -12,4 +12,5 @@ package br.com.clinica.view;
 public class VIEW {
     int id;
     String nome;
+    String endereço;
 }
