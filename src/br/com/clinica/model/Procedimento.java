@@ -9,36 +9,34 @@ package br.com.clinica.model;
  *
  * @author nneto
  */
-public class Teste {
-    public int id;
-    public String nome;
-    public String idade;
+public class Procedimento {
+    private int id;
+    private String nome;
+    private String descricao;
 
     public int getId() {
         return id;
-    }
-
-    public String getNome() {
-        return nome;
-    }
-
-    public String getIdade() {
-        return idade;
     }
 
     public void setId(int id) {
         this.id = id;
     }
 
+    public String getNome() {
+        return nome;
+    }
+
     public void setNome(String nome) {
         this.nome = nome;
     }
 
-    public void setIdade(String idade) {
-        this.idade = idade;
+    public String getDescricao() {
+        return descricao;
     }
+
+    public void setDescricao(String descricao) {
+        this.descricao = descricao;
+    }
+   
     
-    public String falar (){
-        return "olá";
-    }
 }
