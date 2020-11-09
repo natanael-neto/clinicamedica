@@ -9,6 +9,6 @@ package br.com.clinica.dao;
  *
  * @author nneto
  */
-public class DAO {
-    int id;
+public class PrescricaoDAO {
+    
 }

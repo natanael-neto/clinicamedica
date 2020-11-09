@@ -3,14 +3,12 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package br.com.clinica.view;
+package br.com.clinica.dao;
 
 /**
  *
  * @author nneto
  */
-public class VIEW {
-    int id;
-    String nome;
-    String endereço;
+public class ProcedimentoDAO {
+    
 }

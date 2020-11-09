@@ -14,7 +14,7 @@ public class Paciente {
     private String nome;
     private String cpf;
     private String telefone;
-    private String endereço;
+    private String endereco;
     private String email;
     private int idade;
 
@@ -50,12 +50,12 @@ public class Paciente {
         this.telefone = telefone;
     }
 
-    public String getEndereço() {
-        return endereço;
+    public String getEndereco() {
+        return endereco;
     }
 
-    public void setEndereço(String endereço) {
-        this.endereço = endereço;
+    public void setEndereco(String endereco) {
+        this.endereco = endereco;
     }
 
     public String getEmail() {
