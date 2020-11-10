@@ -113,7 +113,7 @@ public class PacienteDAO {
     public List<Paciente> buscarPacientes(String nome) {
         try {
             List<Paciente> lista = new ArrayList<>();
-            String sql = "SELECT * FROM pacientes WHERE nome like ?";
+            String sql = "SELECT * FROM pacientes WHERE nome_paciente like ?";
             PreparedStatement stmt = con.prepareStatement(sql);
             stmt.setString(1, nome);
             ResultSet rs = stmt.executeQuery();
