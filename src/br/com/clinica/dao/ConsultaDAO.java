@@ -35,8 +35,8 @@ public class ConsultaDAO {
         try {
             String sql = "insert into consultas (data_consulta, valor_consulta, status_consulta,"
                     + " descricao_consulta, paciente_consulta, medico_consulta, procedimento_consulta, "
-                    + " prescricao_consulta) "
-                    + "values(?, ?, ?, ?, ?, ?, ?, ?)";
+                    + " prescricao_consulta, horario_consulta) "
+                    + "values(?, ?, ?, ?, ?, ?, ?, ?, ?)";
             PreparedStatement stmt = con.prepareStatement(sql);
             stmt.setString(1, obj.getData());
             stmt.setDouble(2, obj.getValor());
@@ -46,6 +46,7 @@ public class ConsultaDAO {
             stmt.setInt(6, obj.getMedico().getId());
             stmt.setInt(7, obj.getProcedimento().getId());
             stmt.setInt(8, obj.getPrescricao().getId());
+            stmt.setString(9, obj.getHorario());
 
             stmt.execute();
             stmt.close();
@@ -84,6 +85,7 @@ public class ConsultaDAO {
                 obj.setPaciente(paciente);
                 obj.setProcedimento(procedimento);
                 obj.setPrescricao(prescricao);
+                obj.setHorario("horario_consulta");
 
                 lista.add(obj);
             }
@@ -98,7 +100,7 @@ public class ConsultaDAO {
         try {
             String sql = "update consultas set data_consulta=?, valor_consulta=?, status_consulta=?,"
                     + " descricao_consulta=?, paciente_consulta=?, medico_consulta=?, "
-                    + "procedimento_consulta=?, prescricao_consulta=? where id=?";
+                    + "procedimento_consulta=?, prescricao_consulta=?, horario_consulta=? where id=?";
             PreparedStatement stmt = con.prepareStatement(sql);
             stmt.setString(1, obj.getData());
             stmt.setDouble(2, obj.getValor());
@@ -108,7 +110,8 @@ public class ConsultaDAO {
             stmt.setInt(6, obj.getMedico().getId());
             stmt.setInt(7, obj.getProcedimento().getId());
             stmt.setInt(8, obj.getPrescricao().getId());
-            stmt.setInt(9, obj.getId());
+            stmt.setString(9, obj.getHorario());
+            stmt.setInt(10, obj.getId());
 
             stmt.execute();
             stmt.close();
@@ -162,6 +165,7 @@ public class ConsultaDAO {
                 obj.setPaciente(paciente);
                 obj.setProcedimento(procedimento);
                 obj.setPrescricao(prescricao);
+                obj.setHorario("horario_consulta");
 
                 lista.add(obj);
             }
