@@ -74,10 +74,10 @@ public class PacienteDAO {
         }
     }
 
-    public void alterarCliente(Paciente obj) {
+    public void alterarPaciente(Paciente obj) {
         try {
             String sql = "update pacientes set nome_paciente=?, cpf_paciente=?, idade_paciente=?,"
-                    + " telefone_paciente=?, endereco_paciente=?, email_paciente=? where id=?";
+                    + " telefone_paciente=?, endereco_paciente=?, email_paciente=? where id_paciente=?";
             PreparedStatement stmt = con.prepareStatement(sql);
             stmt.setString(1, obj.getNome());
             stmt.setString(2, obj.getCpf());
@@ -97,7 +97,7 @@ public class PacienteDAO {
 
     public void excluirPaciente(Paciente obj) {
         try {
-            String sql = "delete from pacientes where id=?";
+            String sql = "delete from pacientes where id_paciente=?";
             PreparedStatement stmt = con.prepareStatement(sql);
             stmt.setInt(1, obj.getId());
 

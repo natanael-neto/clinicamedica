@@ -5,11 +5,30 @@
  */
 package br.com.clinica.view;
 
+import br.com.clinica.dao.PrescricaoDAO;
+import br.com.clinica.model.Prescricao;
+import java.util.List;
+import javax.swing.table.DefaultTableModel;
+
 /**
  *
  * @author nneto
  */
 public class PrescricaoView extends javax.swing.JFrame {
+
+    public void listar() {
+        PrescricaoDAO dao = new PrescricaoDAO();
+        List<Prescricao> lista = dao.listarPrescricoes();
+        DefaultTableModel dados = (DefaultTableModel) tbl_prescricoes.getModel();
+        dados.setNumRows(0);
+        for (Prescricao p : lista) {
+            dados.addRow(new Object[]{
+                p.getId(),
+                p.getMedicamento(),
+                p.getFormaDeUso()
+            });
+        }
+    }
 
     /**
      * Creates new form PrescricaoView
@@ -38,6 +57,11 @@ public class PrescricaoView extends javax.swing.JFrame {
         jScrollPane1 = new javax.swing.JScrollPane();
         ta_uso = new javax.swing.JTextArea();
         jPanel3 = new javax.swing.JPanel();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        tbl_prescricoes = new javax.swing.JTable();
+        jLabel4 = new javax.swing.JLabel();
+        tf_busca = new javax.swing.JTextField();
+        btn_busca = new javax.swing.JButton();
         btn_salvar = new javax.swing.JButton();
         btn_excluir = new javax.swing.JButton();
         btn_editar = new javax.swing.JButton();
@@ -55,6 +79,11 @@ public class PrescricaoView extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Prescrição");
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowActivated(java.awt.event.WindowEvent evt) {
+                formWindowActivated(evt);
+            }
+        });
 
         jLabel1.setText("Id:");
 
@@ -107,24 +136,84 @@ public class PrescricaoView extends javax.swing.JFrame {
 
         jTabbedPane1.addTab("Cadastro", jPanel1);
 
+        jScrollPane2.addComponentListener(new java.awt.event.ComponentAdapter() {
+            public void componentHidden(java.awt.event.ComponentEvent evt) {
+                jScrollPane2ComponentHidden(evt);
+            }
+        });
+
+        tbl_prescricoes.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+                "Id", "Medicamento", "Forma de Uso"
+            }
+        ));
+        tbl_prescricoes.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tbl_prescricoesMouseClicked(evt);
+            }
+        });
+        jScrollPane2.setViewportView(tbl_prescricoes);
+
+        jLabel4.setText("Buscar por Medicamento:");
+
+        btn_busca.setText("Buscar");
+        btn_busca.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_buscaActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
         jPanel3Layout.setHorizontalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 371, Short.MAX_VALUE)
+            .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabel4)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(tf_busca, javax.swing.GroupLayout.PREFERRED_SIZE, 142, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 19, Short.MAX_VALUE)
+                .addComponent(btn_busca)
+                .addContainerGap())
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 129, Short.MAX_VALUE)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
+                .addGap(0, 3, Short.MAX_VALUE)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel4)
+                    .addComponent(tf_busca, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btn_busca))
+                .addGap(18, 18, 18)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
         jTabbedPane1.addTab("Visualizar", jPanel3);
 
         btn_salvar.setText("Salvar");
+        btn_salvar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_salvarActionPerformed(evt);
+            }
+        });
 
         btn_excluir.setText("Excluir");
+        btn_excluir.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_excluirActionPerformed(evt);
+            }
+        });
 
         btn_editar.setText("Editar");
+        btn_editar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_editarActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -139,7 +228,7 @@ public class PrescricaoView extends javax.swing.JFrame {
                     .addGroup(layout.createSequentialGroup()
                         .addGap(10, 10, 10)
                         .addComponent(btn_salvar)
-                        .addGap(76, 76, 76)
+                        .addGap(82, 82, 82)
                         .addComponent(btn_excluir)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(btn_editar)
@@ -161,6 +250,64 @@ public class PrescricaoView extends javax.swing.JFrame {
         pack();
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
+
+    private void jScrollPane2ComponentHidden(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_jScrollPane2ComponentHidden
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jScrollPane2ComponentHidden
+
+    private void formWindowActivated(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowActivated
+        listar();
+    }//GEN-LAST:event_formWindowActivated
+
+    private void btn_salvarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_salvarActionPerformed
+        Prescricao obj = new Prescricao();
+        obj.setMedicamento(tf_medicamento.getText());
+        obj.setFormaDeUso(ta_uso.getText());
+
+        PrescricaoDAO dao = new PrescricaoDAO();
+        dao.cadastrarPrescricao(obj);
+    }//GEN-LAST:event_btn_salvarActionPerformed
+
+    private void btn_excluirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_excluirActionPerformed
+        Prescricao obj = new Prescricao();
+
+        obj.setId(Integer.parseInt(tf_id.getText()));
+
+        PrescricaoDAO dao = new PrescricaoDAO();
+        dao.excluirPrescricao(obj);
+    }//GEN-LAST:event_btn_excluirActionPerformed
+
+    private void btn_editarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_editarActionPerformed
+        Prescricao obj = new Prescricao();
+        obj.setMedicamento(tf_medicamento.getText());
+        obj.setFormaDeUso(ta_uso.getText());
+        obj.setId(Integer.parseInt(tf_id.getText()));
+
+        PrescricaoDAO dao = new PrescricaoDAO();
+        dao.alterarPrescricao(obj);
+    }//GEN-LAST:event_btn_editarActionPerformed
+
+    private void btn_buscaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_buscaActionPerformed
+        String nome = "%" + tf_busca.getText() + "%";
+        PrescricaoDAO dao = new PrescricaoDAO();
+        List<Prescricao> lista = dao.buscarPrescricoes(nome);
+        DefaultTableModel dados = (DefaultTableModel) tbl_prescricoes.getModel();
+        dados.setNumRows(0);
+        for (Prescricao p : lista) {
+            dados.addRow(new Object[]{
+                p.getId(),
+                p.getMedicamento(),
+                p.getFormaDeUso()
+            });
+        }
+    }//GEN-LAST:event_btn_buscaActionPerformed
+
+    private void tbl_prescricoesMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tbl_prescricoesMouseClicked
+        jTabbedPane1.setSelectedIndex(0);
+        tf_id.setText(tbl_prescricoes.getValueAt(tbl_prescricoes.getSelectedRow(), 0).toString());
+        tf_medicamento.setText(tbl_prescricoes.getValueAt(tbl_prescricoes.getSelectedRow(), 1).toString());
+        ta_uso.setText(tbl_prescricoes.getValueAt(tbl_prescricoes.getSelectedRow(), 2).toString());
+    }//GEN-LAST:event_tbl_prescricoesMouseClicked
 
     /**
      * @param args the command line arguments
@@ -198,18 +345,23 @@ public class PrescricaoView extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btn_busca;
     private javax.swing.JButton btn_editar;
     private javax.swing.JButton btn_excluir;
     private javax.swing.JButton btn_salvar;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JTextArea ta_uso;
+    private javax.swing.JTable tbl_prescricoes;
+    private javax.swing.JTextField tf_busca;
     private javax.swing.JTextField tf_id;
     private javax.swing.JTextField tf_medicamento;
     // End of variables declaration//GEN-END:variables

@@ -79,7 +79,8 @@ public class MedicoDAO {
     public void alterarMedico(Medico obj) {
         try {
             String sql = "update medicos set nome_medico=?, crm_medico=?, telefone_medico=?,"
-                    + " endereco_medico=?, especialidade_medico=?, email_medico=?, idade_medico=? where id=?";
+                    + " endereco_medico=?, especialidade_medico=?, email_medico=?, idade_medico=?"
+                    + " where id_medico=?";
             PreparedStatement stmt = con.prepareStatement(sql);
             stmt.setString(1, obj.getNome());
             stmt.setString(2, obj.getCrm());
@@ -100,7 +101,7 @@ public class MedicoDAO {
 
     public void excluirMedico(Medico obj) {
         try {
-            String sql = "delete from medicos where id=?";
+            String sql = "delete from medicos where id_medico=?";
             PreparedStatement stmt = con.prepareStatement(sql);
             stmt.setInt(1, obj.getId());
 

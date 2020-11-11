@@ -67,7 +67,8 @@ public class ProcedimentoDAO {
 
     public void alterarProcedimento(Procedimento obj) {
         try {
-            String sql = "update procedimentos set nome_procedimento=?, descricao_procedimento=? where id=?";
+            String sql = "update procedimentos set nome_procedimento=?, descricao_procedimento=?"
+                    + " where id_procedimento=?";
             PreparedStatement stmt = con.prepareStatement(sql);
             stmt.setString(1, obj.getNome());
             stmt.setString(2, obj.getDescricao());
@@ -83,7 +84,7 @@ public class ProcedimentoDAO {
 
     public void excluirProcedimento(Procedimento obj) {
         try {
-            String sql = "delete from procedimentos where id=?";
+            String sql = "delete from procedimentos where id_procedimento=?";
             PreparedStatement stmt = con.prepareStatement(sql);
             stmt.setInt(1, obj.getId());
 

@@ -52,7 +52,7 @@ public class PrescricaoDAO {
 
             while (rs.next()) {
                 Prescricao obj = new Prescricao();
-                obj.setId(rs.getInt("id_paciente"));
+                obj.setId(rs.getInt("id_prescricao"));
                 obj.setMedicamento(rs.getString("medicamento_prescricao"));
                 obj.setFormaDeUso(rs.getString("forma_uso_prescricao"));
 
@@ -67,7 +67,8 @@ public class PrescricaoDAO {
 
     public void alterarPrescricao(Prescricao obj) {
         try {
-            String sql = "update pacientes set medicamento_prescricao=?, forma_uso_prescricao=? where id=?";
+            String sql = "update prescricoes set medicamento_prescricao=?, forma_uso_prescricao=?"
+                    + " where id_prescricao=?";
             PreparedStatement stmt = con.prepareStatement(sql);
             stmt.setString(1, obj.getMedicamento());
             stmt.setString(2, obj.getFormaDeUso());
@@ -83,7 +84,7 @@ public class PrescricaoDAO {
 
     public void excluirPrescricao(Prescricao obj) {
         try {
-            String sql = "delete from prescricoes where id=?";
+            String sql = "delete from prescricoes where id_prescricao=?";
             PreparedStatement stmt = con.prepareStatement(sql);
             stmt.setInt(1, obj.getId());
 
@@ -106,7 +107,7 @@ public class PrescricaoDAO {
 
             while (rs.next()) {
                 Prescricao obj = new Prescricao();
-                obj.setId(rs.getInt("id_paciente"));
+                obj.setId(rs.getInt("id_prescricao"));
                 obj.setMedicamento(rs.getString("medicamento_prescricao"));
                 obj.setFormaDeUso(rs.getString("forma_uso_prescricao"));
 

@@ -5,11 +5,30 @@
  */
 package br.com.clinica.view;
 
+import br.com.clinica.dao.ProcedimentoDAO;
+import br.com.clinica.model.Procedimento;
+import java.util.List;
+import javax.swing.table.DefaultTableModel;
+
 /**
  *
  * @author nneto
  */
 public class ProcedimentoView extends javax.swing.JFrame {
+
+    public void listar() {
+        ProcedimentoDAO dao = new ProcedimentoDAO();
+        List<Procedimento> lista = dao.listarProcedimentos();
+        DefaultTableModel dados = (DefaultTableModel) tbl_procedimentos.getModel();
+        dados.setNumRows(0);
+        for (Procedimento p : lista) {
+            dados.addRow(new Object[]{
+                p.getId(),
+                p.getNome(),
+                p.getDescricao()
+            });
+        }
+    }
 
     /**
      * Creates new form ProcedimentoView
@@ -37,12 +56,22 @@ public class ProcedimentoView extends javax.swing.JFrame {
         jScrollPane1 = new javax.swing.JScrollPane();
         ta_descricao = new javax.swing.JTextArea();
         jPanel2 = new javax.swing.JPanel();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        tbl_procedimentos = new javax.swing.JTable();
+        jLabel4 = new javax.swing.JLabel();
+        tf_busca = new javax.swing.JTextField();
+        btn_busca = new javax.swing.JButton();
         btn_salvar = new javax.swing.JButton();
         btn_excluir = new javax.swing.JButton();
         btn_editar = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Procedimento");
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowActivated(java.awt.event.WindowEvent evt) {
+                formWindowActivated(evt);
+            }
+        });
 
         jLabel1.setText("Id:");
 
@@ -95,24 +124,78 @@ public class ProcedimentoView extends javax.swing.JFrame {
 
         jTabbedPane1.addTab("Cadastro", jPanel1);
 
+        tbl_procedimentos.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+                "Id", "Nome", "Descrição"
+            }
+        ));
+        tbl_procedimentos.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tbl_procedimentosMouseClicked(evt);
+            }
+        });
+        jScrollPane2.setViewportView(tbl_procedimentos);
+
+        jLabel4.setText("Buscar por Nome:");
+
+        btn_busca.setText("Buscar");
+        btn_busca.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_buscaActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 448, Short.MAX_VALUE)
+            .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabel4)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(tf_busca, javax.swing.GroupLayout.PREFERRED_SIZE, 229, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(btn_busca)
+                .addContainerGap(37, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 153, Short.MAX_VALUE)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                .addGap(0, 7, Short.MAX_VALUE)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel4)
+                    .addComponent(tf_busca, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btn_busca))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 117, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
         jTabbedPane1.addTab("Visualizar", jPanel2);
 
         btn_salvar.setText("Salvar");
+        btn_salvar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_salvarActionPerformed(evt);
+            }
+        });
 
         btn_excluir.setText("Excluir");
+        btn_excluir.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_excluirActionPerformed(evt);
+            }
+        });
 
         btn_editar.setText("Editar");
+        btn_editar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_editarActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -147,6 +230,60 @@ public class ProcedimentoView extends javax.swing.JFrame {
         pack();
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
+
+    private void formWindowActivated(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowActivated
+        listar();
+    }//GEN-LAST:event_formWindowActivated
+
+    private void btn_salvarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_salvarActionPerformed
+        Procedimento obj = new Procedimento();
+        obj.setNome(tf_nome.getText());
+        obj.setDescricao(ta_descricao.getText());
+
+        ProcedimentoDAO dao = new ProcedimentoDAO();
+        dao.cadastrarProcedimento(obj);
+    }//GEN-LAST:event_btn_salvarActionPerformed
+
+    private void btn_excluirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_excluirActionPerformed
+        Procedimento obj = new Procedimento();
+
+        obj.setId(Integer.parseInt(tf_id.getText()));
+
+        ProcedimentoDAO dao = new ProcedimentoDAO();
+        dao.excluirProcedimento(obj);
+    }//GEN-LAST:event_btn_excluirActionPerformed
+
+    private void btn_editarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_editarActionPerformed
+        Procedimento obj = new Procedimento();
+        obj.setNome(tf_nome.getText());
+        obj.setDescricao(ta_descricao.getText());
+        obj.setId(Integer.parseInt(tf_id.getText()));
+
+        ProcedimentoDAO dao = new ProcedimentoDAO();
+        dao.cadastrarProcedimento(obj);
+    }//GEN-LAST:event_btn_editarActionPerformed
+
+    private void btn_buscaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_buscaActionPerformed
+        String nome = "%" + tf_busca.getText() + "%";
+        ProcedimentoDAO dao = new ProcedimentoDAO();
+        List<Procedimento> lista = dao.buscarProcedimentos(nome);
+        DefaultTableModel dados = (DefaultTableModel) tbl_procedimentos.getModel();
+        dados.setNumRows(0);
+        for (Procedimento p : lista) {
+            dados.addRow(new Object[]{
+                p.getId(),
+                p.getNome(),
+                p.getDescricao()
+            });
+        }
+    }//GEN-LAST:event_btn_buscaActionPerformed
+
+    private void tbl_procedimentosMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tbl_procedimentosMouseClicked
+        jTabbedPane1.setSelectedIndex(0);
+        tf_id.setText(tbl_procedimentos.getValueAt(tbl_procedimentos.getSelectedRow(), 0).toString());
+        tf_nome.setText(tbl_procedimentos.getValueAt(tbl_procedimentos.getSelectedRow(), 1).toString());
+        ta_descricao.setText(tbl_procedimentos.getValueAt(tbl_procedimentos.getSelectedRow(), 2).toString());
+    }//GEN-LAST:event_tbl_procedimentosMouseClicked
 
     /**
      * @param args the command line arguments
@@ -184,17 +321,22 @@ public class ProcedimentoView extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btn_busca;
     private javax.swing.JButton btn_editar;
     private javax.swing.JButton btn_excluir;
     private javax.swing.JButton btn_salvar;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JTextArea ta_descricao;
+    private javax.swing.JTable tbl_procedimentos;
+    private javax.swing.JTextField tf_busca;
     private javax.swing.JTextField tf_id;
     private javax.swing.JTextField tf_nome;
     // End of variables declaration//GEN-END:variables

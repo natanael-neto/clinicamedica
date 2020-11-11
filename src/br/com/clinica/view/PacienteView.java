@@ -5,11 +5,34 @@
  */
 package br.com.clinica.view;
 
+import br.com.clinica.dao.PacienteDAO;
+import br.com.clinica.model.Paciente;
+import java.util.List;
+import javax.swing.table.DefaultTableModel;
+
 /**
  *
  * @author nneto
  */
 public class PacienteView extends javax.swing.JFrame {
+
+    public void listar() {
+        PacienteDAO dao = new PacienteDAO();
+        List<Paciente> lista = dao.listarPacientes();
+        DefaultTableModel dados = (DefaultTableModel) tbl_pacientes.getModel();
+        dados.setNumRows(0);
+        for (Paciente p : lista) {
+            dados.addRow(new Object[]{
+                p.getId(),
+                p.getNome(),
+                p.getCpf(),
+                p.getIdade(),
+                p.getTelefone(),
+                p.getEndereco(),
+                p.getEmail()
+            });
+        }
+    }
 
     /**
      * Creates new form PacienteView
@@ -40,16 +63,26 @@ public class PacienteView extends javax.swing.JFrame {
         jLabel4 = new javax.swing.JLabel();
         tf_endereco = new javax.swing.JTextField();
         jLabel5 = new javax.swing.JLabel();
-        tf_telefone = new javax.swing.JTextField();
         jLabel6 = new javax.swing.JLabel();
         tf_idade = new javax.swing.JTextField();
+        tf_telefone = new javax.swing.JFormattedTextField();
         jPanel2 = new javax.swing.JPanel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        tbl_pacientes = new javax.swing.JTable();
+        jLabel7 = new javax.swing.JLabel();
+        tf_busca = new javax.swing.JTextField();
+        btn_busca = new javax.swing.JButton();
         btn_salvar = new javax.swing.JButton();
         btn_excluir = new javax.swing.JButton();
         btn_editar = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Paciente");
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowActivated(java.awt.event.WindowEvent evt) {
+                formWindowActivated(evt);
+            }
+        });
 
         label_id.setText("Id:");
 
@@ -72,6 +105,12 @@ public class PacienteView extends javax.swing.JFrame {
         jLabel5.setText("Telefone:");
 
         jLabel6.setText("Idade:");
+
+        try {
+            tf_telefone.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.MaskFormatter("(##) #####-####")));
+        } catch (java.text.ParseException ex) {
+            ex.printStackTrace();
+        }
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -106,11 +145,11 @@ public class PacienteView extends javax.swing.JFrame {
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(jLabel5)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(tf_telefone, javax.swing.GroupLayout.PREFERRED_SIZE, 183, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(35, 35, 35)
+                        .addComponent(tf_telefone, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
                         .addComponent(jLabel6)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(tf_idade, javax.swing.GroupLayout.DEFAULT_SIZE, 176, Short.MAX_VALUE)))
+                        .addComponent(tf_idade, javax.swing.GroupLayout.DEFAULT_SIZE, 356, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
@@ -135,32 +174,93 @@ public class PacienteView extends javax.swing.JFrame {
                 .addGap(18, 18, 18)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel5)
-                    .addComponent(tf_telefone, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel6)
-                    .addComponent(tf_idade, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(tf_idade, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(tf_telefone, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(29, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab("Cadastro", jPanel1);
 
+        tbl_pacientes.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+                "Id", "Nome", "CPF", "Idade", "Telefone", "Endereço", "E-mail"
+            }
+        ));
+        tbl_pacientes.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tbl_pacientesMouseClicked(evt);
+            }
+        });
+        jScrollPane1.setViewportView(tbl_pacientes);
+
+        jLabel7.setText("Buscar por Nome:");
+
+        btn_busca.setText("Buscar");
+        btn_busca.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_buscaActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 500, Short.MAX_VALUE)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addComponent(jScrollPane1)
+                .addContainerGap())
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabel7)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(tf_busca, javax.swing.GroupLayout.PREFERRED_SIZE, 464, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(28, 28, 28)
+                .addComponent(btn_busca)
+                .addContainerGap(24, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 174, Short.MAX_VALUE)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                .addGap(0, 15, Short.MAX_VALUE)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel7)
+                    .addComponent(tf_busca, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btn_busca))
+                .addGap(18, 18, 18)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 118, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
         jTabbedPane1.addTab("Visualizar", jPanel2);
 
         btn_salvar.setText("Salvar");
+        btn_salvar.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                btn_salvarMouseClicked(evt);
+            }
+        });
+        btn_salvar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_salvarActionPerformed(evt);
+            }
+        });
 
         btn_excluir.setText("Excluir");
+        btn_excluir.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_excluirActionPerformed(evt);
+            }
+        });
 
         btn_editar.setText("Editar");
+        btn_editar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_editarActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -169,7 +269,7 @@ public class PacienteView extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addGap(38, 38, 38)
                 .addComponent(btn_salvar)
-                .addGap(116, 116, 116)
+                .addGap(215, 215, 215)
                 .addComponent(btn_excluir)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(btn_editar)
@@ -195,6 +295,80 @@ public class PacienteView extends javax.swing.JFrame {
         pack();
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
+
+    private void formWindowActivated(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowActivated
+        listar();
+    }//GEN-LAST:event_formWindowActivated
+
+    private void tbl_pacientesMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tbl_pacientesMouseClicked
+        jTabbedPane1.setSelectedIndex(0);
+        tf_id.setText(tbl_pacientes.getValueAt(tbl_pacientes.getSelectedRow(), 0).toString());
+        tf_nome.setText(tbl_pacientes.getValueAt(tbl_pacientes.getSelectedRow(), 1).toString());
+        tf_cpf.setText(tbl_pacientes.getValueAt(tbl_pacientes.getSelectedRow(), 2).toString());
+        tf_idade.setText(tbl_pacientes.getValueAt(tbl_pacientes.getSelectedRow(), 3).toString());
+        tf_telefone.setText(tbl_pacientes.getValueAt(tbl_pacientes.getSelectedRow(), 4).toString());
+        tf_endereco.setText(tbl_pacientes.getValueAt(tbl_pacientes.getSelectedRow(), 5).toString());
+        tf_email.setText(tbl_pacientes.getValueAt(tbl_pacientes.getSelectedRow(), 6).toString());
+    }//GEN-LAST:event_tbl_pacientesMouseClicked
+
+    private void btn_salvarMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btn_salvarMouseClicked
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btn_salvarMouseClicked
+
+    private void btn_salvarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_salvarActionPerformed
+        Paciente obj = new Paciente();
+        obj.setNome(tf_nome.getText());
+        obj.setCpf(tf_cpf.getText());
+        obj.setEmail(tf_email.getText());
+        obj.setTelefone(tf_telefone.getText());
+        obj.setEndereco(tf_endereco.getText());
+        obj.setIdade(Integer.parseInt(tf_idade.getText()));
+
+        PacienteDAO dao = new PacienteDAO();
+        dao.cadastrarPaciente(obj);
+    }//GEN-LAST:event_btn_salvarActionPerformed
+
+    private void btn_editarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_editarActionPerformed
+        Paciente obj = new Paciente();
+        obj.setNome(tf_nome.getText());
+        obj.setCpf(tf_cpf.getText());
+        obj.setEmail(tf_email.getText());
+        obj.setTelefone(tf_telefone.getText());
+        obj.setEndereco(tf_endereco.getText());
+        obj.setIdade(Integer.parseInt(tf_idade.getText()));
+        obj.setId(Integer.parseInt(tf_id.getText()));
+
+        PacienteDAO dao = new PacienteDAO();
+        dao.alterarPaciente(obj);
+    }//GEN-LAST:event_btn_editarActionPerformed
+
+    private void btn_excluirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_excluirActionPerformed
+        Paciente obj = new Paciente();
+
+        obj.setId(Integer.parseInt(tf_id.getText()));
+
+        PacienteDAO dao = new PacienteDAO();
+        dao.excluirPaciente(obj);
+    }//GEN-LAST:event_btn_excluirActionPerformed
+
+    private void btn_buscaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_buscaActionPerformed
+        String nome = "%" + tf_busca.getText() + "%";
+        PacienteDAO dao = new PacienteDAO();
+        List<Paciente> lista = dao.buscarPacientes(nome);
+        DefaultTableModel dados = (DefaultTableModel) tbl_pacientes.getModel();
+        dados.setNumRows(0);
+        for (Paciente p : lista) {
+            dados.addRow(new Object[]{
+                p.getId(),
+                p.getNome(),
+                p.getCpf(),
+                p.getIdade(),
+                p.getTelefone(),
+                p.getEndereco(),
+                p.getEmail()
+            });
+        }
+    }//GEN-LAST:event_btn_buscaActionPerformed
 
     /**
      * @param args the command line arguments
@@ -232,6 +406,7 @@ public class PacienteView extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btn_busca;
     private javax.swing.JButton btn_editar;
     private javax.swing.JButton btn_excluir;
     private javax.swing.JButton btn_salvar;
@@ -241,16 +416,20 @@ public class PacienteView extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
+    private javax.swing.JLabel jLabel7;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
+    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JLabel label_id;
+    private javax.swing.JTable tbl_pacientes;
+    private javax.swing.JTextField tf_busca;
     private javax.swing.JFormattedTextField tf_cpf;
     private javax.swing.JTextField tf_email;
     private javax.swing.JTextField tf_endereco;
     private javax.swing.JTextField tf_id;
     private javax.swing.JTextField tf_idade;
     private javax.swing.JTextField tf_nome;
-    private javax.swing.JTextField tf_telefone;
+    private javax.swing.JFormattedTextField tf_telefone;
     // End of variables declaration//GEN-END:variables
 }
