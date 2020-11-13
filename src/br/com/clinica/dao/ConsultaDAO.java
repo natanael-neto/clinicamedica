@@ -71,21 +71,20 @@ public class ConsultaDAO {
                 Procedimento procedimento = new Procedimento();
                 Prescricao prescricao = new Prescricao();
 
-                medico.setId(rs.getInt("medico_consulta"));
-                paciente.setId(rs.getInt("paciente_consulta"));
-                procedimento.setId(rs.getInt("procedimento_consulta"));
-                prescricao.setId(rs.getInt("prescricao_consulta"));
-
                 obj.setId(rs.getInt("id_consulta"));
                 obj.setData(rs.getString("data_consulta"));
                 obj.setValor(rs.getDouble("valor_consulta"));
                 obj.setStatus(rs.getString("status_consulta"));
                 obj.setDescricao(rs.getString("descricao_consulta"));
-                obj.setMedico(medico);
+                paciente.setId(rs.getInt("paciente_consulta"));
                 obj.setPaciente(paciente);
+                medico.setId(rs.getInt("medico_consulta"));
+                obj.setMedico(medico);
+                procedimento.setId(rs.getInt("procedimento_consulta"));
                 obj.setProcedimento(procedimento);
+                prescricao.setId(rs.getInt("prescricao_consulta"));
                 obj.setPrescricao(prescricao);
-                obj.setHorario("horario_consulta");
+                obj.setHorario(rs.getString("horario_consulta"));
 
                 lista.add(obj);
             }
@@ -100,7 +99,8 @@ public class ConsultaDAO {
         try {
             String sql = "update consultas set data_consulta=?, valor_consulta=?, status_consulta=?,"
                     + " descricao_consulta=?, paciente_consulta=?, medico_consulta=?, "
-                    + "procedimento_consulta=?, prescricao_consulta=?, horario_consulta=? where id=?";
+                    + "procedimento_consulta=?, prescricao_consulta=?, horario_consulta=?"
+                    + " where id_consulta=?";
             PreparedStatement stmt = con.prepareStatement(sql);
             stmt.setString(1, obj.getData());
             stmt.setDouble(2, obj.getValor());
@@ -123,7 +123,7 @@ public class ConsultaDAO {
 
     public void excluirConsulta(Consulta obj) {
         try {
-            String sql = "delete from consultas where id=?";
+            String sql = "delete from consultas where id_consulta=?";
             PreparedStatement stmt = con.prepareStatement(sql);
             stmt.setInt(1, obj.getId());
 

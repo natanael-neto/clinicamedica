@@ -3,7 +3,10 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/Users/nneto/Documents/NetBeansProjects/Clinica%20Medica/src/br/com/clinica/view/ConsultaView.java</file>
+            <file>file:/C:/Users/nneto/Documents/NetBeansProjects/Clinica%20Medica/src/br/com/clinica/view/MedicoView.java</file>
+            <file>file:/C:/Users/nneto/Documents/NetBeansProjects/Clinica%20Medica/src/br/com/clinica/view/ProcedimentoView.java</file>
+            <file>file:/C:/Users/nneto/Documents/NetBeansProjects/Clinica%20Medica/src/br/com/clinica/view/PrescricaoView.java</file>
+            <file>file:/C:/Users/nneto/Documents/NetBeansProjects/Clinica%20Medica/src/br/com/clinica/view/MainView.java</file>
         </group>
     </open-files>
 </project-private>

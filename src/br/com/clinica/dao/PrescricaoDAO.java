@@ -119,4 +119,40 @@ public class PrescricaoDAO {
             return null;
         }
     }
+
+    public Prescricao buscarPrescricaoPorId(int id) {
+        try {
+            Prescricao prescricao = new Prescricao();
+            String sql = "SELECT * FROM prescricoes WHERE id_prescricao = ?";
+            PreparedStatement stmt = con.prepareStatement(sql);
+            stmt.setInt(1, id);
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                prescricao.setId(rs.getInt("id_prescricao"));
+                prescricao.setMedicamento(rs.getString("medicamento_prescricao"));
+            }
+            return prescricao;
+        } catch (SQLException erro) {
+            JOptionPane.showMessageDialog(null, "Erro: " + erro);
+            return null;
+        }
+    }
+
+    public Prescricao buscarPrescricaoPorMedicamento(String medicamento) {
+        try {
+            Prescricao prescricao = new Prescricao();
+            String sql = "SELECT * FROM prescricoes WHERE medicamento_prescricao = ?";
+            PreparedStatement stmt = con.prepareStatement(sql);
+            stmt.setString(1, medicamento);
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                prescricao.setId(rs.getInt("id_prescricao"));
+                prescricao.setMedicamento(rs.getString("medicamento_prescricao"));
+            }
+            return prescricao;
+        } catch (SQLException erro) {
+            JOptionPane.showMessageDialog(null, "Erro: " + erro);
+            return null;
+        }
+    }
 }

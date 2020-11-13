@@ -119,4 +119,40 @@ public class ProcedimentoDAO {
             return null;
         }
     }
+
+    public Procedimento buscarProcedimentoPorId(int id) {
+        try {
+            Procedimento procedimento = new Procedimento();
+            String sql = "SELECT * FROM procedimentos WHERE id_procedimento = ?";
+            PreparedStatement stmt = con.prepareStatement(sql);
+            stmt.setInt(1, id);
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                procedimento.setId(rs.getInt("id_procedimento"));
+                procedimento.setNome(rs.getString("nome_procedimento"));
+            }
+            return procedimento;
+        } catch (SQLException erro) {
+            JOptionPane.showMessageDialog(null, "Erro: " + erro);
+            return null;
+        }
+    }
+    
+    public Procedimento buscarProcedimentoPorNome(String nome) {
+        try {
+            Procedimento procedimento = new Procedimento();
+            String sql = "SELECT * FROM procedimentos WHERE nome_procedimento = ?";
+            PreparedStatement stmt = con.prepareStatement(sql);
+            stmt.setString(1, nome);
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                procedimento.setId(rs.getInt("id_procedimento"));
+                procedimento.setNome(rs.getString("nome_procedimento"));
+            }
+            return procedimento;
+        } catch (SQLException erro) {
+            JOptionPane.showMessageDialog(null, "Erro: " + erro);
+            return null;
+        }
+    }
 }

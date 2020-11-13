@@ -5,16 +5,71 @@
  */
 package br.com.clinica.view;
 
+import br.com.clinica.dao.ConsultaDAO;
+import br.com.clinica.dao.MedicoDAO;
+import br.com.clinica.dao.PacienteDAO;
+import br.com.clinica.dao.PrescricaoDAO;
+import br.com.clinica.dao.ProcedimentoDAO;
+import br.com.clinica.model.Consulta;
+import br.com.clinica.model.Medico;
+import br.com.clinica.model.Paciente;
+import br.com.clinica.model.Prescricao;
+import br.com.clinica.model.Procedimento;
+import java.awt.Image;
+import java.awt.Toolkit;
+import java.net.URL;
+import java.util.List;
+import javax.swing.table.DefaultTableModel;
+import java.text.NumberFormat;
+import java.util.Locale;
+
 /**
  *
  * @author nneto
  */
 public class ConsultaView extends javax.swing.JFrame {
 
+    public void listar() {
+        ConsultaDAO dao = new ConsultaDAO();
+        MedicoDAO medicoDAO = new MedicoDAO();
+        PacienteDAO pacienteDAO = new PacienteDAO();
+        PrescricaoDAO prescricaoDAO = new PrescricaoDAO();
+        ProcedimentoDAO procedimentoDAO = new ProcedimentoDAO();
+        Locale localeBR = new Locale("en", "US");
+        NumberFormat numberFormat = NumberFormat.getNumberInstance(localeBR);
+
+        List<Consulta> lista = dao.listarConsultas();
+        DefaultTableModel dados = (DefaultTableModel) tbl_consultas.getModel();
+        dados.setNumRows(0);
+        for (Consulta c : lista) {
+
+            Medico medico = medicoDAO.buscarMedicoPorId(c.getMedico().getId());
+            Paciente paciente = pacienteDAO.buscarPacientePorId(c.getPaciente().getId());
+            Procedimento procedimento = procedimentoDAO.buscarProcedimentoPorId(c.getProcedimento().getId());
+            Prescricao prescricao = prescricaoDAO.buscarPrescricaoPorId(c.getPrescricao().getId());
+
+            dados.addRow(new Object[]{
+                c.getId(),
+                medico.getNome(),
+                paciente.getNome(),
+                c.getData(),
+                c.getHorario(),
+                numberFormat.format(c.getValor()),
+                c.getStatus(),
+                procedimento.getNome(),
+                prescricao.getMedicamento(),
+                c.getDescricao()
+            });
+        }
+    }
+
     /**
      * Creates new form ConsultaView
      */
     public ConsultaView() {
+        URL caminhoIcone = getClass().getResource("/br/com/clinica/imagens/logo.png");
+        Image iconeTitulo = Toolkit.getDefaultToolkit().getImage(caminhoIcone);
+        this.setIconImage(iconeTitulo);
         initComponents();
     }
 
@@ -36,11 +91,8 @@ public class ConsultaView extends javax.swing.JFrame {
         jLabel3 = new javax.swing.JLabel();
         cb_medico = new javax.swing.JComboBox<>();
         jLabel4 = new javax.swing.JLabel();
-        tf_horario = new javax.swing.JTextField();
         jLabel5 = new javax.swing.JLabel();
-        tf_data = new javax.swing.JTextField();
         jLabel6 = new javax.swing.JLabel();
-        tf_valor = new javax.swing.JTextField();
         jLabel7 = new javax.swing.JLabel();
         tf_status = new javax.swing.JTextField();
         jLabel8 = new javax.swing.JLabel();
@@ -50,9 +102,12 @@ public class ConsultaView extends javax.swing.JFrame {
         jLabel10 = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
         ta_descricao = new javax.swing.JTextArea();
+        tf_horario = new javax.swing.JFormattedTextField();
+        tf_data = new javax.swing.JFormattedTextField();
+        tf_valor = new javax.swing.JTextField();
         jPanel2 = new javax.swing.JPanel();
         jScrollPane2 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
+        tbl_consultas = new javax.swing.JTable();
         jLabel11 = new javax.swing.JLabel();
         tf_busca = new javax.swing.JTextField();
         btn_busca = new javax.swing.JButton();
@@ -62,18 +117,50 @@ public class ConsultaView extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Consulta");
+        setIconImage(getIconImage());
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowActivated(java.awt.event.WindowEvent evt) {
+                formWindowActivated(evt);
+            }
+        });
 
         jLabel1.setText("Id:");
 
         tf_id.setEditable(false);
 
-        cb_paciente.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        cb_paciente.addAncestorListener(new javax.swing.event.AncestorListener() {
+            public void ancestorMoved(javax.swing.event.AncestorEvent evt) {
+            }
+            public void ancestorAdded(javax.swing.event.AncestorEvent evt) {
+                cb_pacienteAncestorAdded(evt);
+            }
+            public void ancestorRemoved(javax.swing.event.AncestorEvent evt) {
+            }
+        });
+        cb_paciente.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                cb_pacienteMouseClicked(evt);
+            }
+        });
 
         jLabel2.setText("Paciente:");
 
         jLabel3.setText("Médico:");
 
-        cb_medico.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        cb_medico.addAncestorListener(new javax.swing.event.AncestorListener() {
+            public void ancestorMoved(javax.swing.event.AncestorEvent evt) {
+            }
+            public void ancestorAdded(javax.swing.event.AncestorEvent evt) {
+                cb_medicoAncestorAdded(evt);
+            }
+            public void ancestorRemoved(javax.swing.event.AncestorEvent evt) {
+            }
+        });
+        cb_medico.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                cb_medicoMouseClicked(evt);
+            }
+        });
 
         jLabel4.setText("Horário:");
 
@@ -85,11 +172,37 @@ public class ConsultaView extends javax.swing.JFrame {
 
         jLabel8.setText("Procedimento:");
 
-        cb_procedimento.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        cb_procedimento.addAncestorListener(new javax.swing.event.AncestorListener() {
+            public void ancestorMoved(javax.swing.event.AncestorEvent evt) {
+            }
+            public void ancestorAdded(javax.swing.event.AncestorEvent evt) {
+                cb_procedimentoAncestorAdded(evt);
+            }
+            public void ancestorRemoved(javax.swing.event.AncestorEvent evt) {
+            }
+        });
+        cb_procedimento.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                cb_procedimentoMouseClicked(evt);
+            }
+        });
 
         jLabel9.setText("Prescrição:");
 
-        cb_prescricao.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        cb_prescricao.addAncestorListener(new javax.swing.event.AncestorListener() {
+            public void ancestorMoved(javax.swing.event.AncestorEvent evt) {
+            }
+            public void ancestorAdded(javax.swing.event.AncestorEvent evt) {
+                cb_prescricaoAncestorAdded(evt);
+            }
+            public void ancestorRemoved(javax.swing.event.AncestorEvent evt) {
+            }
+        });
+        cb_prescricao.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                cb_prescricaoMouseClicked(evt);
+            }
+        });
 
         jLabel10.setText("Descrição:");
 
@@ -97,6 +210,18 @@ public class ConsultaView extends javax.swing.JFrame {
         ta_descricao.setLineWrap(true);
         ta_descricao.setRows(5);
         jScrollPane1.setViewportView(ta_descricao);
+
+        try {
+            tf_horario.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.MaskFormatter("##:##:##")));
+        } catch (java.text.ParseException ex) {
+            ex.printStackTrace();
+        }
+
+        try {
+            tf_data.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.MaskFormatter("##/##/####")));
+        } catch (java.text.ParseException ex) {
+            ex.printStackTrace();
+        }
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -108,23 +233,15 @@ public class ConsultaView extends javax.swing.JFrame {
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(jLabel2)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(cb_paciente, javax.swing.GroupLayout.PREFERRED_SIZE, 188, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(cb_paciente, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(jLabel3)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(cb_medico, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addComponent(cb_medico, javax.swing.GroupLayout.PREFERRED_SIZE, 359, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(jLabel6)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(tf_valor, javax.swing.GroupLayout.PREFERRED_SIZE, 86, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jLabel8)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(cb_procedimento, javax.swing.GroupLayout.PREFERRED_SIZE, 112, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jLabel9)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(cb_prescricao, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addComponent(jLabel10)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jScrollPane1))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(jLabel1)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -132,20 +249,27 @@ public class ConsultaView extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(jLabel4)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(tf_horario, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(tf_horario, javax.swing.GroupLayout.PREFERRED_SIZE, 158, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(jLabel5)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(tf_data, javax.swing.GroupLayout.PREFERRED_SIZE, 113, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(tf_data, javax.swing.GroupLayout.DEFAULT_SIZE, 136, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(jLabel7)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(tf_status, javax.swing.GroupLayout.PREFERRED_SIZE, 115, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 0, Short.MAX_VALUE))
+                        .addComponent(tf_status, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jLabel6)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(tf_valor, javax.swing.GroupLayout.PREFERRED_SIZE, 127, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(jLabel10)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jScrollPane1)))
+                        .addComponent(jLabel8)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(cb_procedimento, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jLabel9)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(cb_prescricao, javax.swing.GroupLayout.PREFERRED_SIZE, 347, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
@@ -156,11 +280,13 @@ public class ConsultaView extends javax.swing.JFrame {
                     .addComponent(jLabel1)
                     .addComponent(tf_id, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel4)
-                    .addComponent(tf_horario, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel5)
-                    .addComponent(tf_data, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel7)
-                    .addComponent(tf_status, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(tf_status, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel6)
+                    .addComponent(jLabel5)
+                    .addComponent(tf_horario, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(tf_data, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(tf_valor, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel2)
@@ -169,8 +295,6 @@ public class ConsultaView extends javax.swing.JFrame {
                     .addComponent(cb_medico, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel6)
-                    .addComponent(tf_valor, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel8)
                     .addComponent(cb_procedimento, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel9)
@@ -186,25 +310,35 @@ public class ConsultaView extends javax.swing.JFrame {
 
         jTabbedPane1.addTab("Cadastro", jPanel1);
 
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+        tbl_consultas.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
             },
             new String [] {
-                "Id", "Médico", "Paciente", "Data", "Hora", "Valor", "Status", "Procedimento", "Prescrição"
+                "Id", "Médico", "Paciente", "Data", "Hora", "Valor", "Status", "Procedimento", "Prescrição", "Descrição"
             }
         ));
-        jScrollPane2.setViewportView(jTable1);
+        tbl_consultas.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tbl_consultasMouseClicked(evt);
+            }
+        });
+        jScrollPane2.setViewportView(tbl_consultas);
 
         jLabel11.setText("Buscar por Data:");
 
         btn_busca.setText("Buscar");
+        btn_busca.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_buscaActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 724, Short.MAX_VALUE)
+            .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 852, Short.MAX_VALUE)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jLabel11)
@@ -229,10 +363,25 @@ public class ConsultaView extends javax.swing.JFrame {
         jTabbedPane1.addTab("Visualizar", jPanel2);
 
         btn_salvar.setText("Salvar");
+        btn_salvar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_salvarActionPerformed(evt);
+            }
+        });
 
         btn_excluir.setText("Excluir");
+        btn_excluir.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_excluirActionPerformed(evt);
+            }
+        });
 
         btn_editar.setText("Editar");
+        btn_editar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_editarActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -243,13 +392,13 @@ public class ConsultaView extends javax.swing.JFrame {
                 .addComponent(jTabbedPane1)
                 .addContainerGap())
             .addGroup(layout.createSequentialGroup()
-                .addGap(29, 29, 29)
+                .addGap(164, 164, 164)
                 .addComponent(btn_salvar)
-                .addGap(243, 243, 243)
+                .addGap(168, 168, 168)
                 .addComponent(btn_excluir)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(btn_editar)
-                .addGap(35, 35, 35))
+                .addGap(176, 176, 176))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -267,6 +416,202 @@ public class ConsultaView extends javax.swing.JFrame {
         pack();
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
+
+    private void formWindowActivated(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowActivated
+        listar();
+    }//GEN-LAST:event_formWindowActivated
+
+    private void cb_pacienteAncestorAdded(javax.swing.event.AncestorEvent evt) {//GEN-FIRST:event_cb_pacienteAncestorAdded
+        PacienteDAO dao = new PacienteDAO();
+        List<Paciente> listaPacientes = dao.listarPacientes();
+
+        for (Paciente p : listaPacientes) {
+            cb_paciente.addItem(p.getNome());
+        }
+    }//GEN-LAST:event_cb_pacienteAncestorAdded
+
+    private void cb_medicoAncestorAdded(javax.swing.event.AncestorEvent evt) {//GEN-FIRST:event_cb_medicoAncestorAdded
+        MedicoDAO dao = new MedicoDAO();
+        List<Medico> listaMedicos = dao.listarMedicos();
+
+        for (Medico m : listaMedicos) {
+            cb_medico.addItem(m.getNome());
+        }
+    }//GEN-LAST:event_cb_medicoAncestorAdded
+
+    private void cb_procedimentoAncestorAdded(javax.swing.event.AncestorEvent evt) {//GEN-FIRST:event_cb_procedimentoAncestorAdded
+        ProcedimentoDAO dao = new ProcedimentoDAO();
+        List<Procedimento> listaProcedimentos = dao.listarProcedimentos();
+
+        for (Procedimento p : listaProcedimentos) {
+            cb_procedimento.addItem(p.getNome());
+        }
+    }//GEN-LAST:event_cb_procedimentoAncestorAdded
+
+    private void cb_prescricaoAncestorAdded(javax.swing.event.AncestorEvent evt) {//GEN-FIRST:event_cb_prescricaoAncestorAdded
+        PrescricaoDAO dao = new PrescricaoDAO();
+        List<Prescricao> listaPrecricoes = dao.listarPrescricoes();
+
+        for (Prescricao p : listaPrecricoes) {
+            cb_prescricao.addItem(p.getMedicamento());
+        }
+    }//GEN-LAST:event_cb_prescricaoAncestorAdded
+
+    private void btn_salvarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_salvarActionPerformed
+        ConsultaDAO dao = new ConsultaDAO();
+        MedicoDAO medicoDAO = new MedicoDAO();
+        PacienteDAO pacienteDAO = new PacienteDAO();
+        PrescricaoDAO prescricaoDAO = new PrescricaoDAO();
+        ProcedimentoDAO procedimentoDAO = new ProcedimentoDAO();
+
+        Consulta consulta = new Consulta();
+        Paciente paciente = new Paciente();
+        Medico medico = new Medico();
+        Procedimento procedimento = new Procedimento();
+        Prescricao prescricao = new Prescricao();
+
+        paciente = pacienteDAO.buscarPacientePorNome(cb_paciente.getSelectedItem().toString());
+        medico = medicoDAO.buscarMedicoPorNome(cb_medico.getSelectedItem().toString());
+        procedimento = procedimentoDAO.buscarProcedimentoPorNome(cb_procedimento.getSelectedItem().toString());
+        prescricao = prescricaoDAO.buscarPrescricaoPorMedicamento(cb_prescricao.getSelectedItem().toString());
+
+        consulta.setPrescricao(prescricao);
+        consulta.setProcedimento(procedimento);
+        consulta.setMedico(medico);
+        consulta.setPaciente(paciente);
+        consulta.setHorario(tf_horario.getText());
+        consulta.setData(tf_data.getText());
+        consulta.setStatus(tf_status.getText());
+        consulta.setValor(Double.parseDouble(tf_valor.getText()));
+        consulta.setDescricao(ta_descricao.getText());
+
+        dao.cadastrarConsulta(consulta);
+    }//GEN-LAST:event_btn_salvarActionPerformed
+
+    private void tbl_consultasMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tbl_consultasMouseClicked
+        jTabbedPane1.setSelectedIndex(0);
+        tf_id.setText(tbl_consultas.getValueAt(tbl_consultas.getSelectedRow(), 0).toString());
+        cb_medico.setSelectedItem(tbl_consultas.getValueAt(tbl_consultas.getSelectedRow(), 1).toString());
+        cb_paciente.setSelectedItem(tbl_consultas.getValueAt(tbl_consultas.getSelectedRow(), 2).toString());
+        tf_data.setText(tbl_consultas.getValueAt(tbl_consultas.getSelectedRow(), 3).toString());
+        tf_horario.setText(tbl_consultas.getValueAt(tbl_consultas.getSelectedRow(), 4).toString());
+        tf_valor.setText(tbl_consultas.getValueAt(tbl_consultas.getSelectedRow(), 5).toString());
+        tf_status.setText(tbl_consultas.getValueAt(tbl_consultas.getSelectedRow(), 6).toString());
+        cb_procedimento.setSelectedItem(tbl_consultas.getValueAt(tbl_consultas.getSelectedRow(), 7).toString());
+        cb_prescricao.setSelectedItem(tbl_consultas.getValueAt(tbl_consultas.getSelectedRow(), 8).toString());
+        ta_descricao.setText(tbl_consultas.getValueAt(tbl_consultas.getSelectedRow(), 9).toString());
+    }//GEN-LAST:event_tbl_consultasMouseClicked
+
+    private void cb_pacienteMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_cb_pacienteMouseClicked
+        PacienteDAO dao = new PacienteDAO();
+        List<Paciente> listaPacientes = dao.listarPacientes();
+        cb_paciente.removeAllItems();
+        for (Paciente p : listaPacientes) {
+            cb_paciente.addItem(p.getNome());
+        }
+    }//GEN-LAST:event_cb_pacienteMouseClicked
+
+    private void cb_medicoMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_cb_medicoMouseClicked
+        MedicoDAO dao = new MedicoDAO();
+        List<Medico> listaMedicos = dao.listarMedicos();
+        cb_medico.removeAllItems();
+        for (Medico m : listaMedicos) {
+            cb_medico.addItem(m.getNome());
+        }
+    }//GEN-LAST:event_cb_medicoMouseClicked
+
+    private void cb_procedimentoMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_cb_procedimentoMouseClicked
+        ProcedimentoDAO dao = new ProcedimentoDAO();
+        List<Procedimento> listaProcedimentos = dao.listarProcedimentos();
+        cb_procedimento.removeAllItems();
+        for (Procedimento p : listaProcedimentos) {
+            cb_procedimento.addItem(p.getNome());
+        }
+    }//GEN-LAST:event_cb_procedimentoMouseClicked
+
+    private void cb_prescricaoMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_cb_prescricaoMouseClicked
+        PrescricaoDAO dao = new PrescricaoDAO();
+        List<Prescricao> listaPrescricoes = dao.listarPrescricoes();
+        cb_prescricao.removeAllItems();
+        for (Prescricao p : listaPrescricoes) {
+            cb_prescricao.addItem(p.getMedicamento());
+        }
+    }//GEN-LAST:event_cb_prescricaoMouseClicked
+
+    private void btn_editarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_editarActionPerformed
+        ConsultaDAO dao = new ConsultaDAO();
+        MedicoDAO medicoDAO = new MedicoDAO();
+        PacienteDAO pacienteDAO = new PacienteDAO();
+        PrescricaoDAO prescricaoDAO = new PrescricaoDAO();
+        ProcedimentoDAO procedimentoDAO = new ProcedimentoDAO();
+
+        Consulta consulta = new Consulta();
+        Paciente paciente = new Paciente();
+        Medico medico = new Medico();
+        Procedimento procedimento = new Procedimento();
+        Prescricao prescricao = new Prescricao();
+
+        paciente = pacienteDAO.buscarPacientePorNome(cb_paciente.getSelectedItem().toString());
+        medico = medicoDAO.buscarMedicoPorNome(cb_medico.getSelectedItem().toString());
+        procedimento = procedimentoDAO.buscarProcedimentoPorNome(cb_procedimento.getSelectedItem().toString());
+        prescricao = prescricaoDAO.buscarPrescricaoPorMedicamento(cb_prescricao.getSelectedItem().toString());
+
+        consulta.setPrescricao(prescricao);
+        consulta.setProcedimento(procedimento);
+        consulta.setMedico(medico);
+        consulta.setPaciente(paciente);
+        consulta.setHorario(tf_horario.getText());
+        consulta.setData(tf_data.getText());
+        consulta.setStatus(tf_status.getText());
+        consulta.setValor(Double.parseDouble(tf_valor.getText()));
+        consulta.setDescricao(ta_descricao.getText());
+        consulta.setId(Integer.parseInt(tf_id.getText()));
+
+        dao.alterarConsulta(consulta);
+    }//GEN-LAST:event_btn_editarActionPerformed
+
+    private void btn_excluirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_excluirActionPerformed
+        Consulta obj = new Consulta();
+
+        obj.setId(Integer.parseInt(tf_id.getText()));
+
+        ConsultaDAO dao = new ConsultaDAO();
+        dao.excluirConsulta(obj);
+    }//GEN-LAST:event_btn_excluirActionPerformed
+
+    private void btn_buscaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_buscaActionPerformed
+        ConsultaDAO dao = new ConsultaDAO();
+        MedicoDAO medicoDAO = new MedicoDAO();
+        PacienteDAO pacienteDAO = new PacienteDAO();
+        PrescricaoDAO prescricaoDAO = new PrescricaoDAO();
+        ProcedimentoDAO procedimentoDAO = new ProcedimentoDAO();
+        Locale localeBR = new Locale("en", "US");
+        NumberFormat numberFormat = NumberFormat.getNumberInstance(localeBR);
+
+        String data = "%" + tf_busca.getText() + "%";
+        List<Consulta> lista = dao.buscarConsultas(data);
+        DefaultTableModel dados = (DefaultTableModel) tbl_consultas.getModel();
+        dados.setNumRows(0);
+        for (Consulta c : lista) {
+            Medico medico = medicoDAO.buscarMedicoPorId(c.getMedico().getId());
+            Paciente paciente = pacienteDAO.buscarPacientePorId(c.getPaciente().getId());
+            Procedimento procedimento = procedimentoDAO.buscarProcedimentoPorId(c.getProcedimento().getId());
+            Prescricao prescricao = prescricaoDAO.buscarPrescricaoPorId(c.getPrescricao().getId());
+
+            dados.addRow(new Object[]{
+                c.getId(),
+                medico.getNome(),
+                paciente.getNome(),
+                c.getData(),
+                c.getHorario(),
+                numberFormat.format(c.getValor()),
+                c.getStatus(),
+                procedimento.getNome(),
+                prescricao.getMedicamento(),
+                c.getDescricao()
+            });
+        }
+    }//GEN-LAST:event_btn_buscaActionPerformed
 
     /**
      * @param args the command line arguments
@@ -328,11 +673,11 @@ public class ConsultaView extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JTabbedPane jTabbedPane1;
-    private javax.swing.JTable jTable1;
     private javax.swing.JTextArea ta_descricao;
+    private javax.swing.JTable tbl_consultas;
     private javax.swing.JTextField tf_busca;
-    private javax.swing.JTextField tf_data;
-    private javax.swing.JTextField tf_horario;
+    private javax.swing.JFormattedTextField tf_data;
+    private javax.swing.JFormattedTextField tf_horario;
     private javax.swing.JTextField tf_id;
     private javax.swing.JTextField tf_status;
     private javax.swing.JTextField tf_valor;

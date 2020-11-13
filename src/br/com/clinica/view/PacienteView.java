@@ -7,6 +7,9 @@ package br.com.clinica.view;
 
 import br.com.clinica.dao.PacienteDAO;
 import br.com.clinica.model.Paciente;
+import java.awt.Image;
+import java.awt.Toolkit;
+import java.net.URL;
 import java.util.List;
 import javax.swing.table.DefaultTableModel;
 
@@ -39,6 +42,9 @@ public class PacienteView extends javax.swing.JFrame {
      */
     public PacienteView() {
         initComponents();
+        URL caminhoIcone = getClass().getResource("/br/com/clinica/imagens/logo.png");
+        Image iconeTitulo = Toolkit.getDefaultToolkit().getImage(caminhoIcone);
+        this.setIconImage(iconeTitulo);
     }
 
     /**

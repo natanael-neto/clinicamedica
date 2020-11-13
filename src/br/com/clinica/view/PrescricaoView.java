@@ -7,6 +7,9 @@ package br.com.clinica.view;
 
 import br.com.clinica.dao.PrescricaoDAO;
 import br.com.clinica.model.Prescricao;
+import java.awt.Image;
+import java.awt.Toolkit;
+import java.net.URL;
 import java.util.List;
 import javax.swing.table.DefaultTableModel;
 
@@ -34,6 +37,9 @@ public class PrescricaoView extends javax.swing.JFrame {
      * Creates new form PrescricaoView
      */
     public PrescricaoView() {
+        URL caminhoIcone = getClass().getResource("/br/com/clinica/imagens/logo.png");
+        Image iconeTitulo = Toolkit.getDefaultToolkit().getImage(caminhoIcone);
+        this.setIconImage(iconeTitulo);
         initComponents();
     }
 

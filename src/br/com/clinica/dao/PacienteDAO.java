@@ -136,4 +136,40 @@ public class PacienteDAO {
             return null;
         }
     }
+
+    public Paciente buscarPacientePorId(int id) {
+        try {
+            Paciente paciente = new Paciente();
+            String sql = "SELECT * FROM pacientes WHERE id_paciente = ?";
+            PreparedStatement stmt = con.prepareStatement(sql);
+            stmt.setInt(1, id);
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                paciente.setId(rs.getInt("id_paciente"));
+                paciente.setNome(rs.getString("nome_paciente"));
+            }
+            return paciente;
+        } catch (SQLException erro) {
+            JOptionPane.showMessageDialog(null, "Erro: " + erro);
+            return null;
+        }
+    }
+    
+    public Paciente buscarPacientePorNome(String nome) {
+        try {
+            Paciente paciente = new Paciente();
+            String sql = "SELECT * FROM pacientes WHERE nome_paciente = ?";
+            PreparedStatement stmt = con.prepareStatement(sql);
+            stmt.setString(1, nome);
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                paciente.setId(rs.getInt("id_paciente"));
+                paciente.setNome(rs.getString("nome_paciente"));
+            }
+            return paciente;
+        } catch (SQLException erro) {
+            JOptionPane.showMessageDialog(null, "Erro: " + erro);
+            return null;
+        }
+    }
 }
